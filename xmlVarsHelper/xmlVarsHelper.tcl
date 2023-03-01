@@ -1,11 +1,10 @@
 package require tdom
 
 
-
 namespace eval ::xmlVarsHelper {
 
- # dots - list - "->"
-	variable getterFormat "dots"
+ 	# list - dots - dash - underscore - plus
+	variable getterFormat "list"
 	
 	variable data [dict create]
 	
@@ -78,25 +77,55 @@ proc ::xmlVarsHelper::ProcessNode {node dictKey} {
 
 }
 
-
-# TODO: configure the getter according the getter format
-
-proc ::xmlVarsHelper::Get {input} {
-	#TODO: Depending on configuration
-	variable data
-	variable valueKey
-	if {[dict exists $data {*}$input $valueKey]} {
-		return [dict get $data {*}$input $valueKey]
-	}
-	if {[dict exists $data {*}$input]} {
-		return [dict get $data {*}$input]	
-	}
-	error "Key not found"
-}
-
-proc ::xmlVarsHelper::PrintData {} {
+proc ::xmlVarsHelper::PrintRawData {} {
 	variable data
 	puts $data
 }
 
+proc ::xmlVarsHelper::ConfigureGetter {} {
+	variable getterFormat
+	set dataGetterName "Get"
+
+	if {$getterFormat ne "list"} {
+		set dataGetterName "GetFromList"
+		switch -- $getterFormat {
+			"dots" {
+				proc ::xmlVarsHelper::Get {varPath} {return [::xmlVarsHelper::GetFromList [split $varPath "."]]}
+			}
+			"dash" {
+				proc ::xmlVarsHelper::Get {varPath} {return [::xmlVarsHelper::GetFromList [split $varPath "-"]]}
+			}
+			"underscore" {
+				proc ::xmlVarsHelper::Get {varPath} {return [::xmlVarsHelper::GetFromList [split $varPath "_"]]}
+			}
+			"plus" {
+				proc ::xmlVarsHelper::Get {varPath} {return [::xmlVarsHelper::GetFromList [split $varPath "+"]]}
+			}
+			default {
+				error "Invalid definition for getter format"
+			}
+		}
+	}
+
+
+	proc ::xmlVarsHelper::$dataGetterName {varPath} {
+		variable data
+		variable valueKey
+		if {[dict exists $data {*}$varPath $valueKey]} {
+			return [dict get $data {*}$varPath $valueKey]
+		}
+		if {[dict exists $data {*}$varPath]} {
+			return [dict get $data {*}$varPath]	
+		}
+		error "Key not found"
+		
+	}
+}
+
+::xmlVarsHelper::ConfigureGetter
+
+
 package provide xmlVarsHelper
+
+
+
