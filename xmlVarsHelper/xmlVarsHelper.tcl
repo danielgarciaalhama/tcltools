@@ -1,5 +1,7 @@
 package require tdom
 
+package provide xmlVarsHelper
+
 
 namespace eval ::xmlVarsHelper {
 
@@ -13,7 +15,14 @@ namespace eval ::xmlVarsHelper {
 	variable valueKey "#value"
 }
 
-proc ::xmlVarsHelper::ReadConfiguration {filename} {
+
+proc ::xmlVarsHelper::ReadSeveralFiles {filenames} {
+	foreach filename $filenames {
+		::xmlVarsHelper::ReadFile $filename
+	}
+}
+
+proc ::xmlVarsHelper::ReadFile {filename} {
 	variable curDocElement
 	set rootNode [::xmlVarsHelper::GetRootNode $filename]
 	
@@ -105,6 +114,7 @@ proc ::xmlVarsHelper::ConfigureGetter {} {
 				error "Invalid definition for getter format"
 			}
 		}
+		
 	}
 
 
@@ -122,10 +132,22 @@ proc ::xmlVarsHelper::ConfigureGetter {} {
 	}
 }
 
+
+proc ::xmlVarsHelper::ResetData {} {
+	variable data
+	set data [dict create]
+}
+
+proc ::xmlVarsHelper::Remove {key} {
+	variable data
+	set data [dict remove $data $key]
+}
+
+
 ::xmlVarsHelper::ConfigureGetter
 
 
-package provide xmlVarsHelper
+
 
 
 
