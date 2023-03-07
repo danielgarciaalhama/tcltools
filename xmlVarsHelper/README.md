@@ -50,10 +50,11 @@ Using multiple xml files (check the section limitations):
 
 ::xmlVarsHelper::Get [list rootNode1 nodeName nodeName ... attribute]
 ::xmlVarsHelper::Get [list rootNode2 nodeName nodeName ... attribute]
+...
 ::xmlVarsHelper::Get [list rootNodeN nodeName nodeName ... attribute]
 ```
 
-For each file the data can be removed using the **root node name**:
+For each file, the data can be removed using the **root node name**:
 ```tcl
 ::xmlVarsHelper::Remove rootNode
 ```
@@ -63,7 +64,7 @@ Also, all the data can be removed:
 ::xmlVarsHelper::ResetData
 ```
 
-By default, the Get function's argument is a list with the nodes' path (This is the TCL most natural way). This behavior could be changed modifying the getterFormat variable's value defined in the main namespace:
+By default, the Get function's argument is a list with the nodes' path (This is the TCL most natural way). This behavior could be changed modifying the **getterFormat** variable's value defined in the main namespace:
 ```tcl
 # list (default value)
 ::xmlVarsHelper::Get [list rootNode nodeName attribute]
@@ -179,18 +180,18 @@ Or maybe for any reason we want to clear all the data:
 ::xmlVarsHelper::ResetData
 ```
 
-**Note:** During these samples always the filename was the same that the root node name into that file. It has been done in that way just to avoid misunderstandings, but it is not needed (P.E: the file screenConfig.xml could have their root node named as scrConf).
+**Note:** During these samples always the file's name was the same that the root node name into that file. It has been done in that way just to avoid misunderstandings, but it is not needed (P.E: the file screenConfig.xml could have their root node named as scrConf, being scrConf the first item on the node's path for the Get command).
 
 ## Limitations
 This package depends on the [tdom](http://tdom.org) package, so it cannot be used without it. This readme file does not cover the installation of the tdom package, since it depends on the operating system.
 
 This package supports using several xml files simultaneously, but these xml files' root nodes must have different names, otherwise it will not work.
 
-This package was designed as a simple xml reader, so it does not validate any kind of data, it does not provide any XML functionalities and it does not allow creating new data in the read data structure. Depending on your requirements, you can extend this library, but probably it has more sense for you using tdom.
+This package was designed as a simple xml reader, so it does not validate any kind of data, it does not provide any XML functionalities and it does not allow creating new data in the read data structure. Depending on your requirements you can extend this library, but in that case maybe it has more sense using tdom.
 
 This package is totally implemented as an XML file reader, so it does not provide any kind of writing functionalities. If you need to implement an extension or a new library that writes the data to a file into the disk, I would suggest avoiding using attributes into your nodes, it will just increase the complexity of the code.
 
 The behavior of the getter cannot be changed after loading the package (Actually, it has not much sense doing it).
 
-Probably there are other not specified limitations.
+Probably there are other not specified limitations that I totally missed.
 
