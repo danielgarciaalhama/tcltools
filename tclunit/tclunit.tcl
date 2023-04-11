@@ -1,4 +1,5 @@
 # TODO: REMOVE PREVIOUS DATA OF THE TEST
+# TODO: Implement and add the rule of creating the test on their own namespace
 # TODO: Implement before each
 # TODO: Implement after each
 # TODO: Implement setup
@@ -15,7 +16,7 @@ namespace eval ::tclunit {
 
 proc ::tclunit::test {testName body args} {
 	variable testData 
-	
+	puts "CURRENT NS [uplevel 1 [list namespace current]]"
 	eval [list proc $testName {} $body]
 	dict set testData $testName [dict create status 0 tags {} errormsg {}]
 }
