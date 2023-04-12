@@ -1,5 +1,4 @@
 # TODO: REMOVE PREVIOUS DATA OF THE TEST
-# TODO: Implement and add the rule of creating the test on their own namespace
 # TODO: Implement before each
 # TODO: Implement after each
 # TODO: Implement setup
@@ -9,16 +8,38 @@
 # TODO: Implement options
 
 
+
 namespace eval ::tclunit {
 	set testData [dict create]
 
+	set STATUS_NOT_RUN 0
+	set STATUS_OK 1
+	set STATUS_ERROR 2
 }
 
 proc ::tclunit::test {testName body args} {
 	variable testData 
-	puts "CURRENT NS [uplevel 1 [list namespace current]]"
-	eval [list proc $testName {} $body]
-	dict set testData $testName [dict create status 0 tags {} errormsg {}]
+	variable STATUS_NOT_RUN
+	
+	set testns [uplevel 1 [list namespace current]]
+	
+	::tclunit::initnsIfNeeded 
+	
+	set testName [string trimleft $testName ":"]
+	
+	eval [list proc "${testns}::${testName}" {} $body]
+	dict set testData $testns tests $testName [dict create status $STATUS_NOT_RUN tags {} errormsg {}]
+	
+	# Avoids returning the content of testData when this procedure is invoked:
+	return ""
+}
+
+proc ::tclunit::initnsIfNeeded {} {
+	variable testData
+	set testns [uplevel 2 [list namespace current]]
+	if {![dict exists $testData $testns]} { 
+		dict set testData $testns [dict create setUp "" beforeEach "" afterEach "" tearDown "" tests [list]] 
+	}
 }
 
 proc ::tclunit::beforeRun {} {
@@ -26,9 +47,11 @@ proc ::tclunit::beforeRun {} {
 	variable failed 0
 	variable testData
 	variable run 0
-	foreach testName [dict keys $testData] {
-		dict set testData $testName status 0
-		dict set testData $testName errormsg {}
+	foreach testns [dict keys $testData] {
+		foreach testName [dict keys [dict get $testData $testns tests]] {
+			dict set testData $testns tests $testName status 0
+			dict set testData $testns tests $testName errormsg {}
+		}
 	}
 }
 
@@ -37,26 +60,39 @@ proc ::tclunit::runAll {} {
 	
 	::tclunit::beforeRun
 	
-	dict for {testName data} $testData {
-			::tclunit::run $testName
+	foreach testns [dict keys $testData] {
+		::tclunit::runns $testns
 	}
 	
 	::tclunit::ReportResult
 }
 
-proc ::tclunit::run {testName} {
+proc ::tclunit::runns {testns} {
+	variable testData
+	
+	foreach testName [dict keys [dict get $testData $testns tests]] {
+	puts "Invoking $testName"
+		::tclunit::run $testns $testName
+	}
+	
+}
+
+
+proc ::tclunit::run {testns testName} {
 	variable passed
 	variable failed
 	variable testData
 	variable run
+	variable STATUS_OK
+	variable STATUS_ERROR
 	incr run
 	
-	if {[catch {${testName}} msg]} {
-		dict set testData $testName errormsg $msg
-		dict set testData $testName status 2
+	if {[catch {"${testns}::${testName}"} msg]} {
+		dict set testData $testns tests $testName errormsg $msg
+		dict set testData $testns tests $testName status $STATUS_ERROR
 		incr failed
 	} else {
-		dict set testData $testName status 1
+		dict set testData $testns tests $testName status $STATUS_OK
 		incr passed
 	}
 
@@ -67,12 +103,15 @@ proc ::tclunit::ReportResult {} {
 	variable failed
 	variable testData
 	variable run
+	variable STATUS_ERROR
 	
-	dict for {testName data} $testData {
-		if {[dict get $data status] == 2} {
-			puts "Test $testName failed: [dict get $data errormsg]"
-		} else {
-			puts "Test $testName passed."
+	dict for {testns nsData} $testData {
+		dict for {testName data} [dict get $nsData tests] {
+			if {[dict get $data status] == $STATUS_ERROR} {
+				puts "Test $testName failed: [dict get $data errormsg]"
+			} else {
+				puts "Test $testName passed."
+			}
 		}
 	}
 	

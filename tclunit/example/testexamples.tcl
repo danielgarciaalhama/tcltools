@@ -23,8 +23,9 @@ namespace eval ::testSimpleMath {
 	    ::tclunit::assertNotEqualInt 56 [::simplemath::add 262 31]
 	}
 
-	::tclunit::test checkSumFails2 {
+	::tclunit::test ::checkSumFails2 {
 	    ::tclunit::assertEqualInt 4 [::simplemath::add 1 3]
 	    ::tclunit::assertNotEqualInt 5 [::simplemath::add 2 3]
 	}
 }
+
