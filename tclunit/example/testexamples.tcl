@@ -29,3 +29,8 @@ namespace eval ::testSimpleMath {
 	}
 }
 
+# WARNING: PUT THE TESTS INSIDE THE NS EVAL COMMAND. THIS WILL WORK BUT INTERNALLY TCLUNIT WILL CONSIDER THE TEST AS A ROOT NS TEST (::)
+::tclunit::test ::testSimpleMath::checkSumFails3 {
+    ::tclunit::assertEqualInt 4 [::simplemath::add 1 3]
+    ::tclunit::assertNotEqualInt 5 [::simplemath::add 2 3]
+}
