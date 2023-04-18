@@ -3,6 +3,29 @@ source {/home/badchicken/tcltools/tclunit/tclunit.tcl}
 source [file join [file dirname [file normalize [info script]]] simplemath.tcl]
 
 namespace eval ::testSimpleMath {
+
+	variable one 
+	variable two 
+	variable three
+	
+	::tclunit::setUp {
+		variable one 1
+		variable two 2
+		variable three 3
+	}
+	
+	::tclunit::test testSetup {
+ 	    variable one 
+	    variable two 
+	    variable three
+	    ::tclunit::assertEqualInt $three [::simplemath::add $one $two]
+	}
+	
+	::tclunit::test checkSumOk1 {
+	    ::tclunit::assertEqualInt 4 [::simplemath::add 1 3]
+	    ::tclunit::assertNotEqualInt 5 [::simplemath::add 2 1]
+	}
+	
 	::tclunit::test checkSumOk1 {
 	    ::tclunit::assertEqualInt 4 [::simplemath::add 1 3]
 	    ::tclunit::assertNotEqualInt 5 [::simplemath::add 2 1]
@@ -34,3 +57,5 @@ namespace eval ::testSimpleMath {
     ::tclunit::assertEqualInt 4 [::simplemath::add 1 3]
     ::tclunit::assertNotEqualInt 5 [::simplemath::add 2 3]
 }
+
+::tclunit::runAll

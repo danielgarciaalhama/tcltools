@@ -1,7 +1,6 @@
 # TODO: REMOVE PREVIOUS DATA OF THE TEST
 # TODO: Implement before each
 # TODO: Implement after each
-# TODO: Implement setup
 # TODO: Implement teardown
 # TODO: Implement run tag
 # TODO: Define status
@@ -17,6 +16,21 @@ namespace eval ::tclunit {
 	set STATUS_ERROR 2
 }
 
+proc ::tclunit::setUp {body} {
+	variable testData 
+	set testns [uplevel 1 [list namespace current]]
+	
+	::tclunit::initnsIfNeeded
+	
+		
+	eval [list proc "${testns}::setUp" {} $body]
+	
+	dict set testData $testns setUp "setUp"
+	
+	# Avoid returning the content of testData when this procedure is invoked:
+	return ""
+}
+
 proc ::tclunit::test {testName body args} {
 	variable testData 
 	variable STATUS_NOT_RUN
@@ -30,7 +44,7 @@ proc ::tclunit::test {testName body args} {
 	eval [list proc "${testns}::${testName}" {} $body]
 	dict set testData $testns tests $testName [dict create status $STATUS_NOT_RUN tags {} errormsg {}]
 	
-	# Avoids returning the content of testData when this procedure is invoked:
+	# Avoid returning the content of testData when this procedure is invoked:
 	return ""
 }
 
@@ -70,8 +84,13 @@ proc ::tclunit::runAll {} {
 proc ::tclunit::runns {testns} {
 	variable testData
 	
+	if {[dict get $testData $testns setUp] eq "setUp"} {
+		if {[catch {"${testns}::setUp"} msg]} {
+			puts "Error on ${testns} setUp. Some tests might fail."
+		}
+	}
 	foreach testName [dict keys [dict get $testData $testns tests]] {
-	puts "Invoking $testName"
+		puts "Invoking $testName"
 		::tclunit::run $testns $testName
 	}
 	
