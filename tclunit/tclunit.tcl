@@ -1,7 +1,4 @@
 # TODO: REMOVE PREVIOUS DATA OF THE TEST
-# TODO: Implement before each
-# TODO: Implement after each
-# TODO: Implement teardown
 # TODO: Implement run tag
 # TODO: Define status
 # TODO: Implement options
@@ -26,6 +23,51 @@ proc ::tclunit::setUp {body} {
 	eval [list proc "${testns}::setUp" {} $body]
 	
 	dict set testData $testns setUp "setUp"
+	
+	# Avoid returning the content of testData when this procedure is invoked:
+	return ""
+}
+
+proc ::tclunit::tearDown {body} {
+	variable testData 
+	set testns [uplevel 1 [list namespace current]]
+	
+	::tclunit::initnsIfNeeded
+	
+	
+	eval [list proc "${testns}::tearDown" {} $body]
+	
+	dict set testData $testns tearDown "tearDown"
+	
+	# Avoid returning the content of testData when this procedure is invoked:
+	return ""
+}
+
+proc ::tclunit::beforeEach {body} {
+	variable testData 
+	set testns [uplevel 1 [list namespace current]]
+	
+	::tclunit::initnsIfNeeded
+	
+		
+	eval [list proc "${testns}::beforeEach" {} $body]
+	
+	dict set testData $testns beforeEach "beforeEach"
+	
+	# Avoid returning the content of testData when this procedure is invoked:
+	return ""
+}
+
+proc ::tclunit::afterEach {body} {
+	variable testData 
+	set testns [uplevel 1 [list namespace current]]
+	
+	::tclunit::initnsIfNeeded
+	
+		
+	eval [list proc "${testns}::afterEach" {} $body]
+	
+	dict set testData $testns afterEach "afterEach"
 	
 	# Avoid returning the content of testData when this procedure is invoked:
 	return ""
@@ -91,9 +133,14 @@ proc ::tclunit::runns {testns} {
 	}
 	foreach testName [dict keys [dict get $testData $testns tests]] {
 		puts "Invoking $testName"
-		::tclunit::run $testns $testName
+		::tclunit::run $testns $testName		
 	}
 	
+	if {[dict get $testData $testns tearDown] eq "tearDown"} {
+		if {[catch {"${testns}::tearDown"} msg]} {
+			puts "Error on ${testns} teardown. Some tests might fail."
+		}
+	}
 }
 
 
@@ -106,6 +153,12 @@ proc ::tclunit::run {testns testName} {
 	variable STATUS_ERROR
 	incr run
 	
+	if {[dict get $testData $testns beforeEach] eq "beforeEach"} {
+		if {[catch {"${testns}::beforeEach"} msg]} {
+			puts "Error on ${testns} beforeEach. Some tests might fail."
+		}
+	}
+		
 	if {[catch {"${testns}::${testName}"} msg]} {
 		dict set testData $testns tests $testName errormsg $msg
 		dict set testData $testns tests $testName status $STATUS_ERROR
@@ -114,7 +167,13 @@ proc ::tclunit::run {testns testName} {
 		dict set testData $testns tests $testName status $STATUS_OK
 		incr passed
 	}
-
+	
+	if {[dict get $testData $testns afterEach] eq "afterEach"} {
+		if {[catch {"${testns}::afterEach"} msg]} {
+			puts "Error on ${testns} afterEach. Some tests might fail."
+		}
+	}
+	
 }
 
 proc ::tclunit::ReportResult {} {

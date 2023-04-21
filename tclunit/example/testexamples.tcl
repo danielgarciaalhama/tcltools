@@ -7,11 +7,31 @@ namespace eval ::testSimpleMath {
 	variable one 
 	variable two 
 	variable three
+	variable account
+	
+	::tclunit::beforeEach {
+		variable account
+		incr account
+	}
+	
+	
+	::tclunit::afterEach {
+		variable account
+		incr account -1	
+	}
 	
 	::tclunit::setUp {
 		variable one 1
 		variable two 2
 		variable three 3
+		variable account 1
+	}
+	
+	::tclunit::tearDown {
+		variable one 0
+		variable two 0
+		variable three 0
+		variable account 1
 	}
 	
 	::tclunit::test testSetup {
