@@ -1,9 +1,3 @@
-# TODO: REMOVE PREVIOUS DATA OF THE TEST
-# TODO: Implement run tag
-# TODO: Define status
-# TODO: Implement options
-
-
 
 namespace eval ::tclunit {
 	set testData [dict create]
