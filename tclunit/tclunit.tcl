@@ -123,6 +123,16 @@ proc ::tclunit::runAll {} {
 	::tclunit::ReportResult
 }
 
+proc ::tclunit::run {{testns ""} {testName ""}} {
+	if {$testns eq ""} {
+		::tclunit::runAll
+	} elseif {$testName eq ""} {
+		::tclunit::runns $testns
+	} else {
+		::tclunit::runTest $testns $testName	
+	}
+}
+
 proc ::tclunit::runns {testns} {
 	variable testData
 	
@@ -133,7 +143,7 @@ proc ::tclunit::runns {testns} {
 	}
 	foreach testName [dict keys [dict get $testData $testns tests]] {
 		puts "Invoking $testName"
-		::tclunit::run $testns $testName		
+		::tclunit::runTest $testns $testName		
 	}
 	
 	if {[dict get $testData $testns tearDown] eq "tearDown"} {
@@ -144,7 +154,7 @@ proc ::tclunit::runns {testns} {
 }
 
 
-proc ::tclunit::run {testns testName} {
+proc ::tclunit::runTest {testns testName} {
 	variable passed
 	variable failed
 	variable testData

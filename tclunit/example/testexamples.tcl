@@ -1,5 +1,5 @@
 
-source {/home/badchicken/tcltools/tclunit/tclunit.tcl}
+source [file join [file dirname [file normalize [info script]]] .. tclunit.tcl]
 source [file join [file dirname [file normalize [info script]]] simplemath.tcl]
 
 namespace eval ::testSimpleMath {
@@ -74,4 +74,20 @@ namespace eval ::testSimpleMath {
     ::tclunit::assertNotEqualInt 5 [::simplemath::add 2 3]
 }
 
+puts "RUN ALL:"
 ::tclunit::runAll
+
+puts "RUN NS:"
+::tclunit::runns ::testSimpleMath
+
+puts "RUN TEST"
+::tclunit::runTest ::testSimpleMath checkSumOk2
+
+puts "RUN ALL with run"
+::tclunit::run
+
+puts "RUN NS with run"
+::tclunit::run ::testSimpleMath
+
+puts "RUN TEST with run:"
+::tclunit::run ::testSimpleMath checkSumOk2
