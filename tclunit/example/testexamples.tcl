@@ -74,20 +74,12 @@ namespace eval ::testSimpleMath {
     ::tclunit::assertNotEqualInt 5 [::simplemath::add 2 3]
 }
 
-puts "RUN ALL:"
-::tclunit::runAll
 
-puts "RUN NS:"
-::tclunit::runns ::testSimpleMath
-
-puts "RUN TEST"
-::tclunit::runTest ::testSimpleMath checkSumOk2
-
-puts "RUN ALL with run"
+puts "EXAMPLE -> Run all tests:\n"
 ::tclunit::run
-
-puts "RUN NS with run"
+puts "\n\n\n"
+puts "EXAMPLE -> Run tests on specific namespace:\n"
 ::tclunit::run ::testSimpleMath
-
-puts "RUN TEST with run:"
+puts "\n\n\n"
+puts "EXAMPLE -> Run specific test:\n"
 ::tclunit::run ::testSimpleMath checkSumOk2

@@ -108,35 +108,37 @@ proc ::tclunit::beforeRun {} {
 proc ::tclunit::runAll {} {
 	variable testData
 	
-	::tclunit::beforeRun
-	
 	foreach testns [dict keys $testData] {
 		::tclunit::runns $testns
 	}
 	
-	::tclunit::ReportResult
+	
 }
 
 proc ::tclunit::run {{testns ""} {testName ""}} {
+
+	::tclunit::beforeRun
+	
 	if {$testns eq ""} {
 		::tclunit::runAll
+
 	} elseif {$testName eq ""} {
 		::tclunit::runns $testns
 	} else {
 		::tclunit::runTest $testns $testName	
 	}
+	::tclunit::ReportResult $testns $testName
 }
 
 proc ::tclunit::runns {testns} {
 	variable testData
-	
+	puts "tclUnit -> Running tests for namespace ${testns}"
 	if {[dict get $testData $testns setUp] eq "setUp"} {
 		if {[catch {"${testns}::setUp"} msg]} {
 			puts "Error on ${testns} setUp. Some tests might fail."
 		}
 	}
 	foreach testName [dict keys [dict get $testData $testns tests]] {
-		puts "Invoking $testName"
 		::tclunit::runTest $testns $testName		
 	}
 	
@@ -156,6 +158,8 @@ proc ::tclunit::runTest {testns testName} {
 	variable STATUS_OK
 	variable STATUS_ERROR
 	incr run
+	
+	puts "tclUnit -> Running test $testName"
 	
 	if {[dict get $testData $testns beforeEach] eq "beforeEach"} {
 		if {[catch {"${testns}::beforeEach"} msg]} {
@@ -180,7 +184,7 @@ proc ::tclunit::runTest {testns testName} {
 	
 }
 
-proc ::tclunit::ReportResult {} {
+proc ::tclunit::ReportResult {{testnsInput ""} {testNameInput ""}} {
 	variable passed
 	variable failed
 	variable testData
@@ -188,11 +192,11 @@ proc ::tclunit::ReportResult {} {
 	variable STATUS_ERROR
 	
 	dict for {testns nsData} $testData {
-		dict for {testName data} [dict get $nsData tests] {
-			if {[dict get $data status] == $STATUS_ERROR} {
-				puts "Test $testName failed: [dict get $data errormsg]"
-			} else {
-				puts "Test $testName passed."
+		if {$testnsInput eq "" || $testnsInput eq $testns} {
+			dict for {testName data} [dict get $nsData tests] {
+				if {$testNameInput eq "" || $testNameInput eq $testName} {
+					puts [expr {[dict get $data status] == $STATUS_ERROR ? "Test $testName failed: [dict get $data errormsg]" : "Test $testName passed."}] 
+				}
 			}
 		}
 	}
