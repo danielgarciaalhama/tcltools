@@ -1,6 +1,6 @@
 # tclUnit
 
-This tclUnit library should be considered as an starting point for creating a bigger unit testing suite for TCL. For now, appart of the core, for checking the results it only contains the assertEqualInt and assertNotEqualInt functions and they didn't check the variables types, so it will work even for other types of data. Actually, TCL has this internal "magic" that automatically cast types from Int to Strings and viceversa according on how the variable is used and so on, storing the values both in Integer and String (for example expr {8 == "8"} will return 1, and expr {8+"8"} will return 16. Feel free to add new functions like assertIsInt and so on.
+This tclUnit library should be considered as a starting point for creating a bigger unit testing suite for TCL. For now, appart of the core, for checking the results it only contains the assertEqualInt and assertNotEqualInt functions and they didn't check the variables types, so it will work even for other types of data. Actually, TCL has this internal "magic" that automatically cast types from Int to Strings and viceversa according on how the variable is used and so on, storing the values both in Integer and String (for example expr {8 == "8"} will return 1, and expr {8+"8"} will return 16. Feel free to add new functions like assertIsInt and so on.
 
 
 ## Installation
