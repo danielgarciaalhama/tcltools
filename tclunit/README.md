@@ -43,7 +43,7 @@ Define what to do after running the unit tests for this namespace. Take into acc
 }
 ```
 
-The test command is used to define the tests. The idea is like defining a procedure, but using ::tclunit::test instead of using the proc command:
+The test command is used to define the tests. The idea is to define them in the same way that the procedures are defined but using ::tclunit::test instead of the proc command:
 ```tcl
 ::tclunit::test TESTNAME {
    ...
