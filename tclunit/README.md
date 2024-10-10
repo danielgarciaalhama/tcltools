@@ -55,7 +55,7 @@ The test command is used to define the tests. The idea is like defining a proced
 }
 ```
 
-After defining all the test, it is as easy as:
+After defining all the tests, it is as easy as:
 
 Run all the tests:
 ```tcl
