@@ -1,6 +1,6 @@
 # tclUnit
 
-This tclUnit library should be considered as a starting point for creating a bigger unit testing suite for TCL. For now, appart of the core, for checking the results it only contains the assertEqualInt and assertNotEqualInt functions and they didn't check the variables types, so it will work even for other types of data. Actually, TCL has this internal "magic" that automatically cast types from Int to Strings and viceversa according on how the variable is used and so on, storing the values both in Integer and String (for example expr {8 == "8"} will return 1, and expr {8+"8"} will return 16. Feel free to add new functions like assertIsInt and so on.
+This tclUnit library should be considered as a starting point for creating a bigger unit testing suite for TCL. For now, appart of the core, it only contains the assertEqualInt and assertNotEqualInt functions for checking the results and they didn't check the variables types, so it will work even for other types of data. Actually, TCL has this internal "magic" that automatically cast types from Int to Strings and viceversa according on how the variable is used, storing the values both in Integer and String (for example expr {8 == "8"} will return 1, and expr {8+"8"} will return 16. Feel free to add new functions like assertIsInt and so on.
 
 
 ## Installation
@@ -9,7 +9,7 @@ Just download it and use it: You can add it to your source code using the source
 
 ## Usage
 
-Before use it, take into account to order the unit test in a own namespace, the tests are run based on the namespace where they are defined. If you do not separate the tests of different namespace into different namespaces, it will considered all as a part of the same namespace. In other words, if you have two namespaces named car and bike, if you define everything in a namespace named ::tests, everything will be considered as a part of the same namespace and you will not able to run them independently by namespace.  In that case, I recommend defining the tests in namespaces named carTest and bikeTest.
+Before use it, take into account to order the unit test by namespace because the tests are run based on the namespace where they are defined. If you do not separate the tests of different namespace into different namespaces, they will be considered as a part of the same namespace. In other words, if you have two namespaces named car and bike, if you define everything in a namespace named ::tests, everything will be considered as a part of the same namespace and you will not able to run them independently by namespace (the beforeEach, afterEach, setUp and tearDown functions will not be independent and cannot be dupplicated).  In that case, I recommend defining the tests in namespaces named carTest and bikeTest.
 
 The best way to learn it is just checking the simple example added at examples. The file simplemath.tcl contains a simple addition procedure. Inside the testexamples.tcl you can find how the library is used for testing this simplemath.tcl file.
 
